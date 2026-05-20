@@ -1,0 +1,37 @@
+# ----- caches e logs -----
+outputs/_cache_lemmas.pkl
+outputs/_*_run.log
+outputs/__pycache__/
+__pycache__/
+*.pyc
+*.pyo
+.python-version
+.venv/
+venv/
+env/
+
+# ----- editores / SO -----
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# ----- datasets de terceiros (têm .git aninhados e licenças próprias) -----
+# Manter como pasta local; cada subprojeto tem repositório próprio.
+lexicons_corpus_misoginia/
+
+# ----- arquivos do Claude Code (locais ao usuário) -----
+.claude/
+.agents/
+skills-lock.json
+
+# ----- artefatos de clusterização anteriores (alternativa de pesquisa, não usados na V3) -----
+# Comentar a linha abaixo se quiser publicá-los também.
+outputs/cluster_*.csv
+outputs/lexico_lematizado*.csv
+outputs/lexico_nao_lematizado*.csv
+outputs/wordcloud_*.png
+outputs/clusters_*.png
+
+# ----- arquivo vazio do pipeline de bigramas -----
+outputs/lexico_bigramas_final.csv

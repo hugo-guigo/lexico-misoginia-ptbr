@@ -1,0 +1,41 @@
+======================================================================
+ESTATÍSTICAS FINAIS DO LÉXICO DE MISOGINIA
+======================================================================
+
+Total de termos: 4109
+Misóginos: 188
+Não-misóginos: 277
+Neutros: 3644
+
+TOP 30 TERMOS MISÓGINOS:
+----------------------------------------------------------------------
+mulh                      | Score:  0.0296 | Freq+:   475 | Freq-:   954
+burr                      | Score:  0.0200 | Freq+:   310 | Freq-:   498
+gord                      | Score:  0.0172 | Freq+:   258 | Freq-:   311
+brasil                    | Score:  0.0136 | Freq+:   257 | Freq-:   976
+sapat                     | Score:  0.0115 | Freq+:   165 | Freq-:   114
+dess                      | Score:  0.0115 | Freq+:   241 | Freq-:  1155
+band                      | Score:  0.0113 | Freq+:   172 | Freq-:   251
+vergonh                   | Score:  0.0098 | Freq+:   153 | Freq-:   271
+país                      | Score:  0.0086 | Freq+:   143 | Freq-:   346
+esquerd                   | Score:  0.0085 | Freq+:   131 | Freq-:   204
+pirralh                   | Score:  0.0083 | Freq+:   113 | Freq-:     3
+femin                     | Score:  0.0082 | Freq+:   125 | Freq-:   190
+porqu                     | Score:  0.0063 | Freq+:   131 | Freq-:   624
+presid                    | Score:  0.0063 | Freq+:   123 | Freq-:   503
+canalh                    | Score:  0.0059 | Freq+:    88 | Freq-:   119
+refugi                    | Score:  0.0059 | Freq+:    93 | Freq-:   174
+vagabund                  | Score:  0.0058 | Freq+:   100 | Freq-:   292
+sapata                    | Score:  0.0057 | Freq+:    81 | Freq-:    55
+comun                     | Score:  0.0057 | Freq+:    84 | Freq-:   101
+aind                      | Score:  0.0054 | Freq+:   152 | Freq-:  1067
+branc                     | Score:  0.0053 | Freq+:   105 | Freq-:   451
+bolsonar                  | Score:  0.0053 | Freq+:   109 | Freq-:   512
+cade                      | Score:  0.0051 | Freq+:    74 | Freq-:    67
+filh                      | Score:  0.0051 | Freq+:   136 | Freq-:   906
+govern                    | Score:  0.0051 | Freq+:    92 | Freq-:   318
+glob                      | Score:  0.0051 | Freq+:    76 | Freq-:    96
+menin                     | Score:  0.0050 | Freq+:   103 | Freq-:   481
+cham                      | Score:  0.0049 | Freq+:   105 | Freq-:   536
+trabalh                   | Score:  0.0049 | Freq+:   106 | Freq-:   538
+velh                      | Score:  0.0046 | Freq+:    78 | Freq-:   208

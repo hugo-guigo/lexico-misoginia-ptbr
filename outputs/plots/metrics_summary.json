@@ -1,0 +1,118 @@
+{
+  "corpus": {
+    "n_docs": 74338,
+    "n_pos": 14168,
+    "n_neg": 60170
+  },
+  "lexicon": {
+    "path": "lexico_misoginia_output/lexico_misoginia_v1.csv",
+    "n_terms": 8767,
+    "score_describe": {
+      "count": 8767.0,
+      "mean": -2.0133002167217975,
+      "std": 2.887289121386297,
+      "min": -26.8735,
+      "25%": -3.4511000000000003,
+      "50%": -2.1368,
+      "75%": -0.33885,
+      "max": 21.5419
+    },
+    "best_threshold_f1_scan": {
+      "threshold": -1.9999999999999964,
+      "f1_pos": 0.5889974862572963
+    },
+    "chosen_threshold": -2.25,
+    "classification_report_at_chosen_threshold": {
+      "0": {
+        "precision": 0.9369458895968512,
+        "recall": 0.7991524015290011,
+        "f1-score": 0.8625808361213013,
+        "support": 60170.0
+      },
+      "1": {
+        "precision": 0.47495329539036363,
+        "recall": 0.7715979672501412,
+        "f1-score": 0.5879790237999193,
+        "support": 14168.0
+      },
+      "accuracy": 0.7939008313379429,
+      "macro avg": {
+        "precision": 0.7059495924936074,
+        "recall": 0.7853751843895711,
+        "f1-score": 0.7252799299606103,
+        "support": 74338.0
+      },
+      "weighted avg": {
+        "precision": 0.8488952146430253,
+        "recall": 0.7939008313379429,
+        "f1-score": 0.8102447700855008,
+        "support": 74338.0
+      }
+    },
+    "confusion_matrix_at_chosen_threshold": [
+      [
+        48085,
+        12085
+      ],
+      [
+        3236,
+        10932
+      ]
+    ]
+  },
+  "svm": {
+    "holdout": 0.2,
+    "C": 0.3,
+    "max_features": 50000,
+    "classification_report": {
+      "0": {
+        "precision": 0.8370056497175141,
+        "recall": 0.9848761841449227,
+        "f1-score": 0.904940062609758,
+        "support": 12034.0
+      },
+      "1": {
+        "precision": 0.7429378531073446,
+        "recall": 0.18560338743824983,
+        "f1-score": 0.29700734048560135,
+        "support": 2834.0
+      },
+      "accuracy": 0.8325262308313156,
+      "macro avg": {
+        "precision": 0.7899717514124294,
+        "recall": 0.5852397857915863,
+        "f1-score": 0.6009737015476797,
+        "support": 14868.0
+      },
+      "weighted avg": {
+        "precision": 0.8190753204470528,
+        "recall": 0.8325262308313156,
+        "f1-score": 0.7890615762968807,
+        "support": 14868.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        11852,
+        182
+      ],
+      [
+        2308,
+        526
+      ]
+    ],
+    "average_precision": 0.5849124711058677
+  },
+  "outputs": {
+    "plots_dir": "outputs/plots",
+    "plots": [
+      "lexicon_doc_score_hist.png",
+      "lexicon_term_score_hist.png",
+      "lexicon_f1_vs_threshold.png",
+      "lexicon_confusion_matrix.png",
+      "svm_precision_recall_curve.png",
+      "svm_confusion_matrix.png",
+      "svm_decision_score_hist.png"
+    ]
+  }
+}
