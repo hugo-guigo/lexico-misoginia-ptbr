@@ -25,13 +25,15 @@ lexicons_corpus_misoginia/
 .agents/
 skills-lock.json
 
-# ----- artefatos de clusterização anteriores (alternativa de pesquisa, não usados na V3) -----
-# Comentar a linha abaixo se quiser publicá-los também.
-outputs/cluster_*.csv
-outputs/lexico_lematizado*.csv
-outputs/lexico_nao_lematizado*.csv
-outputs/wordcloud_*.png
-outputs/clusters_*.png
+# ----- documentos locais (referências bibliográficas + orientações da Profa.) -----
+# PDFs copyrighted e orientações privadas — não publicar.
+docs/
 
-# ----- arquivo vazio do pipeline de bigramas -----
-outputs/lexico_bigramas_final.csv
+# ----- artefatos do LaTeX (gerados na compilação) -----
+artigo_erigo/*.aux
+artigo_erigo/*.bbl
+artigo_erigo/*.blg
+artigo_erigo/*.log
+artigo_erigo/*.out
+artigo_erigo/*.toc
+artigo_erigo/artigo_erigo.pdf

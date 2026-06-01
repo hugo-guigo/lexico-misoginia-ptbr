@@ -411,7 +411,7 @@ def main() -> int:
     print(f"   total de termos: {len(v3)}")
 
     # Amostras
-    print("\nTOP 20 termos misóginos (V3):")
+    print("\nTOP 20 termos com traços de misoginia (V3):")
     print(v3[v3.polarity == "misogino"].head(20).to_string(index=False))
 
     return 0

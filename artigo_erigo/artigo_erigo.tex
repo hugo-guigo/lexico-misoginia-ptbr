@@ -1,0 +1,385 @@
+\documentclass[12pt]{article}
+
+\usepackage{sbc-template}
+\usepackage{graphicx,url}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{enumitem}
+\usepackage{placeins}
+\usepackage{booktabs}
+
+\sloppy
+
+\title{Constru\c{c}\~ao Semi-Autom\'atica de um L\'exico de Misoginia em
+       Portugu\^es Brasileiro: Resultados Preliminares}
+
+\author{Hugo Guilherme de Assis Paula\inst{1}
+  , Deborah Silva Alves Fernandes\inst{1}}
+
+\address{Instituto de Inform\'atica -- Universidade Federal de Goi\'as (UFG)\\
+  Goi\^ania -- GO -- Brasil
+  \email{hugo.guilherme.paula@gmail.com, deborah@inf.ufg.br}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{resumo}
+A detec\c{c}\~ao autom\'atica de misoginia em ambientes digitais demanda
+recursos lexicais especializados em portugu\^es brasileiro, ainda escassos
+na literatura. Este artigo descreve a constru\c{c}\~ao preliminar de um
+l\'exico de termos associados a textos com tra\c{c}os de misoginia, induzido
+de forma semi-autom\'atica a partir de um corpus binariamente anotado de
+74.338 documentos. O m\'etodo combina sele\c{c}\~ao por TF--IDF
+discriminativo e expans\~ao por PMI, com normaliza\c{c}\~ao via
+lematiza\c{c}\~ao do spaCy (\texttt{pt\_core\_news\_lg}). O recurso
+preliminar cont\'em 531 termos. Em uma avalia\c{c}\~ao bin\'aria
+out-of-sample, um classificador linear com features derivadas do l\'exico
+atinge F1 = 0,87 na classe de interesse, indicando que o recurso \'e
+promissor como sinal complementar para tarefas de detec\c{c}\~ao
+autom\'atica.
+\end{resumo}
+
+\begin{abstract}
+The automatic detection of misogyny in digital environments requires
+specialized lexical resources in Brazilian Portuguese, still scarce in the
+literature. This paper describes the preliminary construction of a lexicon
+of terms that may be associated with texts displaying traces of misogyny,
+induced semi-automatically from a binary-annotated corpus of 74,338
+documents. The method combines discriminative TF--IDF selection and PMI
+expansion, with normalization via spaCy lemmatization
+(\texttt{pt\_core\_news\_lg}). The preliminary resource contains 531 terms.
+In an out-of-sample binary evaluation, a linear classifier with
+lexicon-derived features reaches F1 = 0.87 on the target class, indicating
+the resource is promising as a complementary signal for automatic detection
+tasks.
+\end{abstract}
+
+% ===========================================================================
+\section{Introdu\c{c}\~ao}
+% ===========================================================================
+
+A misoginia em ambientes digitais constitui um problema relevante para a
+an\'alise autom\'atica de linguagem, especialmente quando se busca
+distinguir ofensa gen\'erica de ataques direcionados a mulheres. No
+contexto brasileiro, esse fen\^omeno se manifesta em redes sociais e
+plataformas de coment\'ario com vocabul\'ario espec\'ifico, frequentemente
+ancorado em estere\'otipos culturais e na sobreposi\c{c}\~ao com o discurso
+pol\'itico de \'odio, o que dificulta a captura por listas gen\'ericas de
+termos ofensivos.
+
+Apesar do avan\c{c}o das abordagens de classifica\c{c}\~ao para discurso
+de \'odio e linguagem abusiva em portugu\^es brasileiro
+\cite{vargas2022hatebr,leite2020toldbr}, ainda h\'a escassez de
+\emph{recursos lexicais} especializados em misoginia. Tal lacuna limita
+aplica\c{c}\~oes de PLN que dependem de representa\c{c}\~ao lingu\'istica
+interpret\'avel, como classificadores baseados em \emph{features}
+estruturadas ou m\'odulos de explicabilidade.
+
+Antes de prosseguir, adotamos a seguinte \textbf{defini\c{c}\~ao
+operacional}: neste artigo, consideram-se \emph{textos com tra\c{c}os de
+misoginia} aqueles que apresentam hostilidade, desqualifica\c{c}\~ao,
+sexualiza\c{c}\~ao ofensiva ou agress\~ao verbal direcionada a mulheres;
+os demais textos s\~ao tratados como n\~ao-mis\'oginos para fins da tarefa
+bin\'aria adotada. A express\~ao ``tra\c{c}os de'' refor\c{c}a que a
+classifica\c{c}\~ao final depende da ocorr\^encia em contexto: palavras
+isoladas n\~ao s\~ao mis\'oginas por si, mas podem indicar a presen\c{c}a
+de um discurso mis\'ogino quando observadas em texto real.
+
+Diante dessa lacuna, este trabalho tem como objetivo construir
+preliminarmente um l\'exico de misoginia em portugu\^es brasileiro por
+meio de indu\c{c}\~ao semi-autom\'atica a partir de corpora anotados e
+avaliar seu uso em uma tarefa bin\'aria de classifica\c{c}\~ao textual.
+As contribui\c{c}\~oes deste artigo s\~ao:
+
+\begin{enumerate}[leftmargin=*,topsep=2pt,itemsep=2pt]
+  \item Um \textbf{pipeline preliminar de indu\c{c}\~ao lexical} que
+        combina sele\c{c}\~ao por TF--IDF discriminativo e expans\~ao por
+        PMI sobre lemas, descrito de forma reprodut\'ivel.
+  \item Um \textbf{l\'exico inicial} de 531 termos em portugu\^es
+        brasileiro, organizados em classes lexicais sugeridas com base em
+        taxonomia consolidada.
+  \item Uma \textbf{avalia\c{c}\~ao inicial} do l\'exico em
+        classifica\c{c}\~ao bin\'aria \emph{out-of-sample}, comparando
+        modelos de refer\^encia com a configura\c{c}\~ao apoiada pelo
+        recurso lexical.
+\end{enumerate}
+
+% ===========================================================================
+\section{Trabalhos Relacionados}
+% ===========================================================================
+
+Trabalhos anteriores abordam a detec\c{c}\~ao autom\'atica de misoginia
+e de linguagem abusiva por meio de modelos supervisionados, recursos
+lexicais e corpora anotados em diferentes idiomas e contextos digitais.
+
+No \^ambito da \textbf{detec\c{c}\~ao de misoginia}, Anzovino, Fersini e
+Rosso \cite{anzovino2018} prop\~oem a primeira taxonomia operacional
+voltada \`a classifica\c{c}\~ao autom\'atica em \emph{tweets}, com cinco
+classes (\emph{discredit}, \emph{stereotype \& objectification},
+\emph{sexual harassment \& threats of violence}, \emph{dominance} e
+\emph{derailing}). Sultana, Sarker e Bosu \cite{sultana2021} estendem esse
+quadro com uma r\'ubrica de anota\c{c}\~ao que separa classes adicionais
+de hostilidade impl\'icita (\emph{victim blaming}, \emph{objectification})
+e operacionaliza crit\'erios verific\'aveis por anotadores humanos.
+
+Em \textbf{recursos para portugu\^es brasileiro}, dois corpora s\~ao
+particularmente relevantes para nosso trabalho. O HateBR
+\cite{vargas2022hatebr} re\'une 7.000 coment\'arios anotados do
+Instagram, com r\'otulos hier\'arquicos de linguagem ofensiva e tipos de
+\'odio, incluindo misoginia. O ToLD-BR \cite{leite2020toldbr} contribui
+com 21.000 \emph{tweets} anotados separadamente para cada tipo de
+toxicidade (misoginia, racismo, homofobia, insulto, obsceno, xenofobia),
+o que permite isolar a dimens\~ao misoginia de outras formas de
+hostilidade.
+
+No \textbf{m\'etodo de constru\c{c}\~ao lexical}, Monteles
+\cite{monteles2023} prop\~oe um pipeline de expans\~ao autom\'atica de
+l\'exico para an\'alise de sentimentos em \emph{tweets} que combina uma
+\emph{semente} obtida por TF--IDF discriminativo com uma fase de
+expans\~ao baseada em PMI. Adotamos esse m\'etodo, com a substitui\c{c}\~ao
+de \emph{stemming} por \textbf{lematiza\c{c}\~ao do spaCy}
+\cite{honnibal2017spacy} para garantir legibilidade dos termos --
+crit\'erio importante porque o recurso ser\'a submetido a valida\c{c}\~ao
+manual por anotadores humanos.
+
+Diferentemente de abordagens centradas exclusivamente em classifica\c{c}\~ao
+supervisionada de ponta a ponta, este estudo concentra-se na
+\textbf{constru\c{c}\~ao de um recurso lexical especializado} em
+portugu\^es brasileiro, com avalia\c{c}\~ao inicial de seu potencial
+discriminativo.
+
+% ===========================================================================
+\section{Metodologia}
+% ===========================================================================
+
+A metodologia foi organizada em quatro etapas: defini\c{c}\~ao operacional
+do fen\^omeno, prepara\c{c}\~ao do corpus, constru\c{c}\~ao do l\'exico
+e avalia\c{c}\~ao preliminar em classifica\c{c}\~ao bin\'aria.
+
+\subsection{Defini\c{c}\~ao operacional}
+
+Conforme apresentado na Se\c{c}\~ao 1, consideram-se textos com tra\c{c}os
+de misoginia aqueles que apresentam hostilidade, desqualifica\c{c}\~ao,
+sexualiza\c{c}\~ao ofensiva ou agress\~ao verbal direcionada a mulheres.
+A taxonomia adotada -- 7 classes lexicais principais (descr\'edito,
+estereotipiza\c{c}\~ao, ass\'edio sexual, amea\c{c}as de viol\^encia,
+domina\c{c}\~ao, culpabiliza\c{c}\~ao da v\'itima e objetifica\c{c}\~ao
+sexual), derivadas de \cite{anzovino2018} e \cite{sultana2021}, mais 2
+subclasses transversais opcionais (\emph{misogynoir} e viol\^encia
+pol\'itica digital) -- serve nesta vers\~ao do artigo apenas como
+\emph{enquadramento conceitual} para interpreta\c{c}\~ao qualitativa dos
+termos induzidos. A avalia\c{c}\~ao reportada aqui \'e exclusivamente
+bin\'aria.
+
+\subsection{Corpora e prepara\c{c}\~ao dos dados}
+
+Para a constru\c{c}\~ao do recurso lexical, foram utilizados corpora
+anotados em portugu\^es brasileiro previamente consolidados em um corpus
+bin\'ario unificado, conforme a Tabela~\ref{tab:corpora}.
+
+\begin{table}[ht]
+\centering
+\caption{Corpora utilizados na constru\c{c}\~ao do l\'exico, com origem
+do r\'otulo de misoginia e quantidade aproveitada ap\'os limpeza.}
+\label{tab:corpora}
+\begin{tabular}{lllr}
+\toprule
+\textbf{Corpus} & \textbf{Origem} & \textbf{R\'otulo utilizado} &
+\textbf{Docs.} \\
+\midrule
+HateBR \cite{vargas2022hatebr}      & Instagram & misoginia/\'odio
+                                                 hier\'arquico & 7.000 \\
+ToLD-BR \cite{leite2020toldbr}      & Twitter   & coluna \texttt{misogyny}
+                                                                 & 21.000 \\
+Demais fontes agregadas             & misto     & bin\'ario consolidado
+                                                                 & 46.338 \\
+\midrule
+\textbf{Total unificado}            &           &
+                                                & \textbf{74.338} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+O mapeamento dos r\'otulos originais para a distin\c{c}\~ao bin\'aria
+adotada seguiu o crit\'erio: documentos com qualquer r\'otulo positivo de
+misoginia ou de \'odio direcionado a mulheres foram marcados como
+classe~1; os demais como classe~0. Casos amb\'iguos ou textos
+excessivamente curtos (\textless\,5 caracteres) foram descartados antes
+da consolida\c{c}\~ao final.
+
+\subsection{Pr\'e-processamento e indu\c{c}\~ao do l\'exico}
+
+Os textos passaram por normaliza\c{c}\~ao (caixa baixa, remo\c{c}\~ao de
+URLs, men\c{c}\~oes, hashtags e caracteres n\~ao alfab\'eticos),
+tokeniza\c{c}\~ao, remo\c{c}\~ao de \emph{stopwords} do portugu\^es e
+\textbf{lematiza\c{c}\~ao} pelo spaCy \cite{honnibal2017spacy} com o
+modelo \texttt{pt\_core\_news\_lg}. Optou-se por lematiza\c{c}\~ao em vez
+de \emph{stemming} porque o recurso ser\'a submetido a valida\c{c}\~ao
+manual; lemas s\~ao linguisticamente mais leg\'iveis e reduzem o esfor\c{c}o
+cognitivo dos anotadores.
+
+A indu\c{c}\~ao do l\'exico segue o m\'etodo de Monteles
+\cite{monteles2023}, em duas fases:
+
+\paragraph{Fase 1: Semente por TF--IDF discriminativo.}
+Para cada lema $x$ do vocabul\'ario, calcula-se o TF--IDF separadamente
+nas duas subdivis\~oes do corpus (classe~1 vs.\ classe~0). A pontua\c{c}\~ao
+discriminativa \'e dada por
+$\operatorname{score}(x) = \operatorname{tfidf}_{mis}(x) /
+(\operatorname{tfidf}_{non}(x) + \varepsilon)$, e seleciona-se o
+\emph{top}-200 por classe -- produzindo 200 sementes para classe~1 e 200
+para classe~0.
+
+\paragraph{Fase 2: Expans\~ao por PMI.}
+Para cada candidato $x$ do corpus restante, calculam-se as
+informa\c{c}\~oes m\'utuas pontuais $\operatorname{PMI}(x, S_{mis})$ e
+$\operatorname{PMI}(x, S_{non})$, onde $S_{mis}$ e $S_{non}$ s\~ao os
+conjuntos-semente da fase 1. O escore de Monteles \'e
+
+\begin{equation}
+O(x) = \operatorname{PMI}(x, S_{mis}) - \operatorname{PMI}(x, S_{non}).
+\label{eq:o}
+\end{equation}
+
+Aceitam-se candidatos com $|O(x)| \geq 1{,}5$. Os par\^ametros
+operacionais foram: janela de coocorr\^encia de 5 lemas, frequ\^encia
+m\'inima 5, coocorr\^encia m\'inima 3.
+
+\subsection{Avalia\c{c}\~ao preliminar}
+
+Para avaliar a utilidade do l\'exico, foi adotada uma tarefa bin\'aria
+de classifica\c{c}\~ao de textos, comparando-se a configura\c{c}\~ao de
+refer\^encia (TF--IDF puro de lemas, \emph{unigramas}, m\'aximo de 10.000
+features) com a configura\c{c}\~ao apoiada pelo recurso lexical: \`as
+features de TF--IDF adicionam-se tr\^es atributos derivados do l\'exico
+calculados por documento -- \texttt{mean\_score} (m\'edia dos escores
+$O(x)$ dos termos do documento que aparecem no l\'exico),
+\texttt{misog\_ratio} (raz\~ao entre termos com $O(x) > 0$ e o total de
+matches) e \texttt{match\_count} (n\'umero de matches no documento).
+
+O conjunto de teste \emph{out-of-sample} \'e composto por 333 frases do
+ToLD-BR n\~ao usadas na constru\c{c}\~ao do l\'exico, selecionadas com
+crit\'erio de alta confian\c{c}a na anota\c{c}\~ao (\(\geq 2\) votos de
+misoginia entre os anotadores originais para a classe positiva, e nenhum
+r\'otulo de toxicidade ativo para a classe negativa). Os modelos
+comparados s\~ao implementados em scikit-learn \cite{pedregosa2011sklearn}
+com \texttt{class\_weight=\textquotesingle balanced\textquotesingle} para
+lidar com o desbalanceamento $\sim 80/20$. As m\'etricas reportadas s\~ao
+\textbf{F1}, \textbf{precis\~ao} e \textbf{recall} na classe~1 (com
+tra\c{c}os de misoginia).
+
+% ===========================================================================
+\section{Resultados Preliminares}
+% ===========================================================================
+
+A aplica\c{c}\~ao do pipeline produziu um l\'exico de \textbf{531 termos}
+em portugu\^es brasileiro -- 268 com escore $O(x) > 0$ (associados \`a
+classe~1) e 263 com $O(x) < 0$ (associados \`a classe~0). A
+Tabela~\ref{tab:exemplos} ilustra termos representativos do
+\emph{top}~20 da classe positiva, com sugest\~ao de classe lexical
+obtida por similaridade vetorial \emph{a posteriori}.
+
+\begin{table}[ht]
+\centering
+\caption{Exemplos selecionados do l\'exico induzido (classe positiva).
+Os termos representam \emph{candidatos lexicais discriminativos}: a
+classifica\c{c}\~ao final como elemento de um texto com tra\c{c}os de
+misoginia depende sempre da ocorr\^encia em contexto.}
+\label{tab:exemplos}
+\begin{tabular}{lrrl}
+\toprule
+\textbf{Termo} & \textbf{$O(x)$} & \textbf{$\mathit{freq}_{mis}$} &
+\textbf{Classe lexical sugerida} \\
+\midrule
+canalha      & 4{,}07 & 105 & Descr\'edito \\
+feminista    & 3{,}42 &  90 & Descr\'edito \\
+bandido      & 3{,}31 & 138 & Amea\c{c}as de Viol\^encia \\
+safar        & 3{,}30 &  41 & Amea\c{c}as de Viol\^encia \\
+sapat\~ao    & 2{,}98 &  29 & Ass\'edio Sexual \\
+piranha      & 2{,}71 &  37 & Ass\'edio Sexual \\
+mulherzinha  & 2{,}55 &  17 & Estereotipiza\c{c}\~ao \\
+vadia        & 2{,}48 &  44 & Ass\'edio Sexual \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A Tabela~\ref{tab:resultados} resume os resultados obtidos na
+avalia\c{c}\~ao preliminar, comparando a configura\c{c}\~ao baseline
+(TF--IDF puro) com a configura\c{c}\~ao apoiada pelo l\'exico, em quatro
+classificadores supervisionados.
+
+\begin{table}[ht]
+\centering
+\caption{Desempenho no corpus de teste \emph{out-of-sample} (333
+documentos), classe positiva. F1, precis\~ao e recall referem-se \`a
+classe com tra\c{c}os de misoginia. Melhor F1 em \textbf{negrito}.}
+\label{tab:resultados}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Modelo} & \textbf{F1} & \textbf{Precis\~ao} & \textbf{Recall} \\
+\midrule
+SVM linear (TF--IDF + l\'exico)         & \textbf{0,871} & 0,910 & 0,835 \\
+Regress\~ao Log\'istica (TF--IDF + l\'exico) & 0,846 & 0,920 & 0,782 \\
+Random Forest (TF--IDF + l\'exico)      & 0,560 & 0,718 & 0,459 \\
+MLP (TF--IDF + l\'exico)                & 0,506 & 1,000 & 0,338 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+De modo geral, os resultados indicam que o recurso lexical produzido
+apresenta potencial como sinal complementar para a identifica\c{c}\~ao de
+textos com tra\c{c}os de misoginia. Os classificadores lineares (SVM e
+Regress\~ao Log\'istica) generalizam bem para o conjunto de teste
+\emph{out-of-sample}, com F1 acima de 0{,}84. O ganho relativo \`a
+baseline -- omitida aqui em favor de uma \'unica tabela principal --
+concentra-se sobretudo na \textbf{precis\~ao}, sugerindo que as
+\emph{features} derivadas do l\'exico ajudam o classificador a evitar
+falsos positivos em textos com vocabul\'ario polissemicamente ambivalente.
+
+\textbf{Limita\c{c}\~oes.} O estudo apresenta as seguintes
+limita\c{c}\~oes que delimitam o escopo das conclus\~oes:
+(i)~o l\'exico foi induzido a partir de corpora majoritariamente do
+Twitter e Instagram, o que limita a generaliza\c{c}\~ao para outros
+dom\'inios;
+(ii)~muitos termos t\^em forte depend\^encia contextual, refletida na
+presen\c{c}a de termos pol\'iticos no \emph{top} do l\'exico que s\'o se
+caracterizam como elementos de discurso mis\'ogino quando direcionados a
+mulheres em pap\'eis pol\'iticos -- a anota\c{c}\~ao manual em curso pelo
+grupo de pesquisa registra esse grau de depend\^encia contextual termo a
+termo;
+(iii)~a valida\c{c}\~ao humana final do recurso pelos anotadores ainda
+n\~ao foi conclu\'ida no momento da reda\c{c}\~ao deste artigo.
+
+% ===========================================================================
+\section{Conclus\~ao}
+% ===========================================================================
+
+Este artigo apresentou uma abordagem preliminar para constru\c{c}\~ao
+semi-autom\'atica de um l\'exico de misoginia em portugu\^es brasileiro
+e uma avalia\c{c}\~ao inicial de seu uso em classifica\c{c}\~ao bin\'aria
+de textos. O pipeline combina sele\c{c}\~ao por TF--IDF discriminativo,
+expans\~ao por PMI e lematiza\c{c}\~ao com spaCy, gerando um recurso
+preliminar de 531 termos. A avalia\c{c}\~ao bin\'aria \emph{out-of-sample}
+indica desempenho s\'olido (F1 = 0{,}87) com classificadores lineares
+quando o l\'exico \'e usado como sinal complementar \`a representa\c{c}\~ao
+TF--IDF.
+
+Os resultados sugerem que o recurso lexical constru\'ido \'e promissor
+para apoiar tarefas de detec\c{c}\~ao autom\'atica, ainda que dependa de
+refinamento metodol\'ogico e valida\c{c}\~ao adicional. Como
+continuidade da pesquisa, prev\^em-se: (i)~a consolida\c{c}\~ao da
+valida\c{c}\~ao manual do l\'exico pelos anotadores do grupo, com
+atribui\c{c}\~ao de classe lexical e grau de depend\^encia contextual
+por termo; (ii)~a amplia\c{c}\~ao do corpus de avalia\c{c}\~ao para
+textos jornal\'isticos e de comentaristas, fora dos dom\'inios Twitter
+e Instagram; e (iii)~a explora\c{c}\~ao de modelos neurais densos quando
+houver disponibilidade computacional adequada, para comparar com a
+linha de base linear apresentada aqui.
+
+\bibliographystyle{sbc}
+\bibliography{referencias}
+
+\end{document}

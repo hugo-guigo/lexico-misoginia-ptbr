@@ -189,7 +189,7 @@ def anotar_lexico() -> pd.DataFrame:
     df = pd.read_csv(ENTRADA_V3)
     # anotar apenas a polaridade misógina
     df_mis = df[df["polarity"] == "misogino"].copy().reset_index(drop=True)
-    print(f"   {len(df_mis)} termos misóginos para anotar")
+    print(f"   {len(df_mis)} termos com traços de misoginia para anotar")
 
     print(f"🧠 Carregando spaCy: {SPACY_MODEL}")
     nlp = spacy.load(SPACY_MODEL, disable=["parser", "ner"])

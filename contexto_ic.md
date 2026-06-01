@@ -18,15 +18,30 @@ A detecção automática de discurso de ódio misógino em português brasileiro
 
 ### O que este projeto constrói
 
-Um léxico especializado em misoginia digital em português brasileiro com:
-- Termos categorizados por tipo de violência (11 categorias)
-- Validação por múltiplos anotadores
+Um léxico especializado de **termos que podem estar associados a textos com
+traços de misoginia** em português brasileiro, com:
+- Termos organizados em **7 classes lexicais principais** + **2 subclasses
+  transversais** opcionais (revisão jun/2026; substitui versão anterior de 11
+  classes)
+- Validação por múltiplos anotadores (votação na classe lexical + grau de
+  dependência contextual)
 - Metodologia replicável documentada
 - Aplicabilidade em modelos de ML
 
+**Princípio metodológico:** as classes são **classes lexicais sugeridas**, não
+classificação definitiva de misoginia. Palavras isoladas têm apenas o
+significado de dicionário; só podem ser tratadas como integrantes de conteúdo
+com traços de misoginia **contextualmente**.
+
 ---
 
-## 2. TAXONOMIA DAS 11 CATEGORIAS
+## 2. TAXONOMIA (7 CLASSES PRINCIPAIS + 2 TRANSVERSAIS)
+
+> Versão revisada em jun/2026 após orientações da Profa. Deborah. Substitui a
+> versão anterior de 11 classes. **Derailing** e **Neossexismo** foram
+> removidas como classes próprias; **Misogynoir** e **Violência Política
+> Digital** viraram **subclasses transversais** opcionais que podem coexistir
+> com qualquer classe principal.
 
 ### Bases teóricas
 
@@ -39,78 +54,81 @@ A taxonomia sintetiza três fontes:
 - **Sexismo** = dimensão ideológica/justificativa da hierarquia patriarcal
 - **Misoginia** = dimensão punitiva/coercitiva que pune mulheres que transgridem normas
 
-### As 11 categorias em detalhe
+### As 7 classes principais em detalhe
 
-#### Categoria 1 — Descrédito
+#### Classe 1 — Descrédito
 Difamação ou desqualificação da mulher sem intenção ofensiva explícita, minando credibilidade, competência ou autoridade.
 - **Manifestações:** termos que questionam capacidade intelectual, infantilizam, minimizam conquistas
 - **Exemplos de stems:** `imbecil`, `cretin`, `débil`, `pirralh`, `cafaj`, `ordinári`, `molusc`, `crápul`
 - **Refs:** Sultana et al. (2021); Anzovino et al. (2018)
 
-#### Categoria 2 — Estereotipização
+#### Classe 2 — Estereotipização
 Atribuição de características/papéis fixos com base em estereótipos de gênero.
 - **Manifestações:** papéis domésticos, estereótipos físicos, generalização de comportamentos femininos
 - **Exemplos de stems:** `mulherzinh`, `loirinh`, `tpm`, `gord`, `magr`, `mocinh`
 - **Refs:** Glick & Fiske (1997); Anzovino et al. (2018)
 
-#### Categoria 3 — Assédio Sexual
+#### Classe 3 — Assédio Sexual
 Sexualização não consentida em espaços digitais.
 - **Manifestações:** comentários sobre corpo, propostas sexuais, insultos sexuais, uso pejorativo de identidade sexual
 - **Exemplos de stems:** `safad`, `piranh`, `vadi`, `piriguet`, `sapat`, `sapata`, `fême`, `vagin`
 - **Refs:** Jane (2017); Mantilla (2015)
 
-#### Categoria 4 — Ameaças de Violência
+#### Classe 4 — Ameaças de Violência
 Intimidação com ameaças de violência física, sexual ou psicológica.
 - **Manifestações:** ameaças diretas, incitação, expressões de desejo de sofrimento
 - **Exemplos de stems:** `incit`, `incitaç`, `apanh`, `viol`, `atir`, `terror`, `maldit`
 - **Refs:** Jane (2017); Mantilla (2015)
 
-#### Categoria 5 — Dominação
+#### Classe 5 — Dominação
 Exercício de controle e imposição de hierarquia patriarcal.
 - **Manifestações:** imperativos de silêncio, negação de agência, resistência à liderança feminina
 - **Exemplos de stems:** `quintal`, `rebeld`, `varr`, `cass`, `manobr`, `deveri`
 - **Refs:** Manne (2017); Anzovino et al. (2018)
 
-#### Categoria 6 — Derailing
-Estratégia discursiva de desvio e invalidação de questões legítimas levantadas por mulheres.
-- **Manifestações:** "e os homens?", acusações de vitimismo, whataboutism, minimização
-- **ATENÇÃO:** Difícil de capturar por léxico isolado — depende de contexto conversacional
-- **Exemplos de stems:** `mimad`, `artificial` (em contexto de "causa artificial")
-- **Refs:** Manne (2017); MOL (Vargas et al., 2024)
-
-#### Categoria 7 — Culpabilização da Vítima
-Responsabilização da mulher pelos problemas/agressões que sofre.
+#### Classe 6 — Culpabilização da Vítima
+Termos que responsabilizam a mulher pelos problemas/agressões que sofre.
 - **Manifestações:** "ela pediu", questionamento de roupas/comportamento, minimização de agressão
-- **Exemplos de stems:** `submiss`, `decot` (em contexto culpabilizador)
+- **Exemplos (lemas):** `submisso`, `decote` (em contexto culpabilizador)
 - **Refs:** Sultana et al. (2021); Manne (2017)
 
-#### Categoria 8 — Objetificação Sexual
-Redução da mulher a objeto sexual ou partes do corpo.
+#### Classe 7 — Objetificação Sexual
+Termos que reduzem a mulher a objeto sexual ou partes do corpo.
 - **Manifestações:** desumanização por hipersexualização, classificações físicas, linguagem de mercadoria
-- **Exemplos de stems:** `biscat`, `raparig`, `farinh`, `pelud`, `culh`, `fuf`, `pên`
-- **Refs:** Anzovino et al. (2018); Massanari (2017)
+- **Exemplos (lemas):** `biscate`, `rapariga`, `peludo`, `culhão`, `fufa`
+- **Refs:** Sultana et al. (2021); Anzovino et al. (2018); Massanari (2017)
 
-#### Categoria 9 — Neossexismo
-Forma moderna e sutil de sexismo que nega existência de discriminação.
-- **Manifestações:** discurso de "igualdade já alcançada", ataques ao feminismo, "meritocracia"
-- **Exemplos de stems:** `feminazi`, `feminaz`, `feminist` (pejorativo), `gayz`, `demasi`
-- **Refs:** Manne (2020); Banet-Weiser & Miltner (2016)
+---
 
-#### Categoria 10 — Misogynoir ⚠️ CONTRIBUIÇÃO ORIGINAL
+### Subclasses transversais (opcionais, podem coexistir com qualquer classe principal)
+
+#### T1 — Misogynoir
 Intersecção de misoginia e racismo direcionada especificamente a mulheres negras.
 - **Conceito:** cunhado por Moya Bailey (2010)
 - **Manifestações:** hipersexualização racializada, estereótipos específicos de mulheres negras
-- **LACUNA CRÍTICA:** Nenhum léxico existente contempla — é uma contribuição original deste projeto
-- **Exemplos de stems:** `muçulman` (interseção gênero+religião/raça), `pret` (quando misógino racial)
-- **Refs:** Bailey (2010); Silva (2022) — Racismo Algorítmico
+- **Uso na anotação:** marcar `transversal = T1` em adição à classe principal
+- **LACUNA CRÍTICA:** Nenhum léxico brasileiro existente contempla a intersecção
+- **Refs:** Bailey (2010); Silva (2022) — *Racismo Algorítmico*
 
-#### Categoria 11 — Violência Política Digital ⚠️ CONTRIBUIÇÃO ORIGINAL
+#### T2 — Violência Política Digital
 Ataques sistemáticos contra mulheres em posições de liderança política.
 - **Manifestações:** deslegitimação por gênero, ataques coordenados em eleições, doxxing de políticas
-- **LACUNA CRÍTICA:** Ausente em todos os léxicos existentes
+- **Uso na anotação:** marcar `transversal = T2` em adição à classe principal (ex.: 1 + T2 para "incompetente porque é mulher" dirigido a parlamentar)
+- **LACUNA CRÍTICA:** Ausente em todos os léxicos brasileiros existentes
 - **Contexto BR:** Intensificada nas eleições 2018, 2020, 2022, 2024
-- **Exemplos de stems:** `deput`, `senad`, `mandat`, `inelegível`, `traid` (em contexto político)
 - **Refs:** Mantilla (2015); Jane (2017); SciELO Brasil (2023)
+
+---
+
+### Classes da versão anterior que foram removidas
+
+- **Derailing** (antiga classe 6) — estruturalmente conversacional, não
+  capturável por léxico isolado de unigramas. É um fenômeno pragmático/
+  discursivo, não uma classe lexical estável.
+- **Neossexismo** (antiga classe 9) — é um modo discursivo transversal; os
+  termos típicos (`feminazi`, `feminismo é mimizento`) normalmente atuam como
+  **Descrédito** (1) ou **Dominação** (5) e, quando relevante o aspecto
+  político, recebem a transversal **T2**.
 
 ---
 
@@ -120,7 +138,7 @@ Ataques sistemáticos contra mulheres em posições de liderança política.
 - **Tamanho:** 74.338 documentos
 - **Origem:** Fusão de HateBR + ToLD-BR + variações anotadas
 - **Colunas:** `text`, `label`, `source`
-- **Label:** 0 = não-misógino (60.170), 1 = misógino (14.168)
+- **Label:** 0 = sem traços de misoginia (60.170), 1 = com traços de misoginia (14.168)
 - **Proporção:** ~80/20 — **desbalanceado**, usar class_weight='balanced' nos modelos
 - **Atenção:** Muitos textos são apenas números (IDs) — filtrar com `len(text) > 5`
 
@@ -193,13 +211,19 @@ def preprocess(text):
 - **Problema:** Ainda tem ruído político; núcleo pequeno (188 termos)
 
 ### V3 (lexico_misoginia_v3_semente_pmi.csv)
-- **Método:** Semente TF-IDF (Monteles, 2023) + expansão PMI
-- **Tamanho:** 1.324 termos totais, 399 misóginos brutos
-- **Validado:** 130 misóginos com categoria taxonômica
+- **Método:** Semente TF-IDF (Monteles, 2023) + expansão PMI, em **lemas
+  spaCy** (`pt_core_news_lg`) — não stems.
+- **Tamanho:** 531 termos no léxico final (268 com traços + 263 sem traços).
+- **Esta é a versão atual e única usada nas entregas.** V1 e V2 estão
+  descontinuadas (ficam no repositório apenas como histórico).
 
 ### V3 Validado Final (lexico_v3_validado_final.csv)
-- **Colunas:** term, polarity, score_norm, O_score, pmi_mis, pmi_non, freq_mis, freq_non, n_cooc_mis, n_cooc_non, origem, decisao, categoria_id, categoria_nome, confianca, obs_anotacao
-- **Este é o arquivo para usar nos experimentos (Tarefas 5 e 6)**
+- **Colunas:** term, polarity, score_norm, O_score, pmi_mis, pmi_non, freq_mis,
+  freq_non, n_cooc_mis, n_cooc_non, origem, decisao, classe_lexical_sugerida,
+  nome_classe, transversal, dependencia_contextual, exemplo_uso, confianca,
+  obs_anotacao
+- **Este é o arquivo para usar nos experimentos (Tarefas 5 e 6)** após a
+  votação do grupo.
 
 ---
 
@@ -210,10 +234,10 @@ def preprocess(text):
 **Objetivo:** ~200-500 frases rotuladas manualmente para avaliar o léxico em texto não visto.
 
 **Estratégia recomendada:**
-1. Extrair frases misóginas dos datasets originais por categoria
+1. Extrair frases com traços de misoginia dos datasets originais por classe
 2. Usar `ToLD-BR/experiments/data/agreement_files/misogyny_alpha.csv` como base — já tem anotações
 3. Complementar com coleta manual de comentários de notícias sobre mulheres
-4. Rotular com: `text`, `label`, `categoria_id`, `categoria_nome`, `fonte`, `anotador`
+4. Rotular com: `text`, `label`, `categoria_id` (1–7), `categoria_nome`, `transversal` (T1/T2 opcional), `fonte`, `anotador`
 
 **Formato do arquivo de saída:**
 ```csv

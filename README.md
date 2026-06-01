@@ -20,7 +20,7 @@ aplicação em modelos de aprendizado de máquina.
 
 | Documento | O que contém |
 |---|---|
-| [`taxonomia_misoginia_digital.md`](taxonomia_misoginia_digital.md) | **Taxonomia formal** das 11 classes de misoginia digital, com citações dos especialistas (Anzovino, Manne, Sultana, Bailey). Entrega da Tarefa 1. |
+| [`taxonomia_misoginia_digital.md`](taxonomia_misoginia_digital.md) | **Taxonomia formal** — 7 classes lexicais principais + 2 subclasses transversais (revisão jun/2026), com citações dos especialistas (Anzovino, Manne, Sultana, Bailey). Entrega da Tarefa 1. |
 | [`RELATORIO_PROGRESSO.md`](RELATORIO_PROGRESSO.md) | **Relatório de progresso** atual — leia este se você é orientadora/colega revisando o andamento. |
 | [`contexto_ic.md`](contexto_ic.md) | Embasamento conceitual detalhado (referência interna). |
 | [`CLAUDE.md`](CLAUDE.md) | Instruções de trabalho do projeto e decisões técnicas fixadas. |
@@ -33,7 +33,7 @@ aplicação em modelos de aprendizado de máquina.
 ├── LICENSE                            # MIT
 ├── CLAUDE.md                          # instruções e estado do projeto
 ├── contexto_ic.md                     # embasamento conceitual
-├── taxonomia_misoginia_digital.md     # ⭐ Tarefa 1 — taxonomia das 11 classes
+├── taxonomia_misoginia_digital.md     # ⭐ Tarefa 1 — taxonomia (7 classes + 2 transversais)
 ├── RELATORIO_PROGRESSO.md             # ⭐ relatório de progresso
 │
 ├── corpus_unificado_final.csv         # corpus principal (74.338 docs antes de limpeza)
@@ -46,26 +46,30 @@ aplicação em modelos de aprendizado de máquina.
 │   │
 │   ├── lexico_semente_tfidf.csv       # semente (top-200 por classe)
 │   ├── lexico_misoginia_v3_semente_pmi.csv/.json  # V3 — léxico expandido por PMI
-│   ├── lexico_v3_anotado.csv          # V3 com categoria sugerida automaticamente
-│   ├── planilha_votacao_grupo.csv     # planilha para os 3 anotadores do grupo
+│   ├── lexico_v3_anotado.csv          # V3 com classe lexical sugerida automaticamente
+│   ├── preparar_planilha_v2.py        # Tarefa 3 — planilha v2 com dependência contextual e exemplo
+│   ├── planilha_votacao_grupo_v2.csv  # planilha v2 (revisão jun/2026)
 │   ├── corpus_teste_frases.csv        # corpus de teste (template)
 │   └── resultados_modelos.csv         # resultados dos modelos
 │
-├── lexico_misoginia_output/           # léxicos legados V1/V2 (em stems RSLP)
-│
-├── misogyny_lexicon_builder.py        # léxico V1 (LLR, RSLP)
-├── classifier.py                      # classificador base (SVM + TF-IDF do V1)
-├── pipeline_lexico_bigramas.py        # pipeline de bigramas (PMI + LLR)
-├── pipeline_lexico_misoginia_langgraph.py  # pipeline LangGraph + FastText + KMeans
-└── ...
+└── artigo_erigo/                      # ⭐ artigo curto para submissão ao ERIGO (LaTeX/SBC)
+    ├── artigo_erigo.tex
+    ├── referencias.bib
+    └── sbc-template.sty, sbc.bst, caption2.sty
 ```
+
+> **Nota.** Scripts V1/V2 (em stems RSLP — `misogyny_lexicon_builder.py`,
+> `classifier.py`, `pipeline_lexico_bigramas.py`, `pipeline_lexico_misoginia_langgraph.py`
+> e demais arquivos auxiliares) foram **removidos do repositório** em jun/2026.
+> A pipeline atual usa apenas V3 (lematização spaCy + Monteles TF-IDF + PMI).
+> Histórico recuperável via `git log -- <arquivo>`.
 
 ## ⚙️ Como rodar
 
 **Pré-requisitos** (Python 3.10+):
 
 ```bash
-pip install spacy scikit-learn pandas numpy scipy nltk gensim
+pip install spacy scikit-learn pandas numpy scipy nltk
 python -m spacy download pt_core_news_lg
 ```
 
@@ -127,7 +131,8 @@ Lista completa em [`taxonomia_misoginia_digital.md`](taxonomia_misoginia_digital
 Este é o repositório oficial da IC. Contribuições do grupo de pesquisa:
 
 1. **Votação da taxonomia**: 3 anotadores devem preencher
-   [`outputs/planilha_votacao_grupo.csv`](outputs/planilha_votacao_grupo.csv).
+   [`outputs/planilha_votacao_grupo_v2.csv`](outputs/planilha_votacao_grupo_v2.csv)
+   indicando a **classe lexical** sugerida e o **grau de dependência contextual** de cada termo.
 2. **Coleta de notícias**: adicionar frases reais de notícias/redes sociais nas linhas
    `fonte=noticias` de [`outputs/corpus_teste_frases.csv`](outputs/corpus_teste_frases.csv).
 3. **Issues / PRs**: bem-vindos para apontar erros na taxonomia ou propor classes
